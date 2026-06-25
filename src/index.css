@@ -17,3 +17,25 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Admin form alanları için ortak stil */
+.form-input {
+  width: 100%;
+  border: 2px solid #f1f1f4;
+  border-radius: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-sky);
+}
+
+/* 3 satırda kırp (kart açıklamaları) */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

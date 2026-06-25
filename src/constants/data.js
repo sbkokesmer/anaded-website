@@ -9,11 +9,11 @@ import {
 
 export const NAV_LINKS = [
   { label: "Ana Sayfa", to: "anasayfa" },
-  { label: "Hakkımızda", to: "hakkimizda" },
-  { label: "Hizmetler", to: "hizmetler" },
-  { label: "Faaliyetler", to: "faaliyetler" },
+  { label: "Hakkımızda", to: "/hakkimizda", isPage: true },
+  { label: "Hizmetler", to: "/hizmetler", isPage: true },
+  { label: "Faaliyetler", to: "/faaliyetler", isPage: true },
   { label: "Duyurular", to: "/duyurular", isPage: true },
-  { label: "İletişim", to: "iletisim" },
+  { label: "İletişim", to: "/iletisim", isPage: true },
 ];
 
 export const STATS = [

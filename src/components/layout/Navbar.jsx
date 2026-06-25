@@ -9,16 +9,24 @@ import {
   FaUser,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { NAV_LINKS, CONTACT_INFO } from "../../constants/data";
+import { NAV_LINKS } from "../../constants/data";
 import { useScrollPosition } from "../../hooks/useScrollDirection";
 import { useAuth } from "../../context/AuthContext";
+import { useContact } from "../../context/ContactContext";
+import { useNotifications } from "../../context/NotificationContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { scrolled } = useScrollPosition();
-  const { user, logout } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
+  const { contact } = useContact();
+  const { unreadCount } = useNotifications();
   const location = useLocation();
   const isHome = location.pathname === "/";
+
+  // Supabase kullanıcısında görünen ad: metadata > e-postanın @ öncesi
+  const displayName =
+    user?.user_metadata?.name || user?.email?.split("@")[0] || "Üye";
 
   return (
     <>
@@ -29,15 +37,15 @@ export default function Navbar() {
             <span className="flex items-center gap-2">
               <FaEnvelope className="text-sky" />
               <a
-                href={`mailto:${CONTACT_INFO.email}`}
+                href={`mailto:${contact.email}`}
                 className="text-sky hover:text-white transition"
               >
-                {CONTACT_INFO.email}
+                {contact.email}
               </a>
             </span>
             <span className="flex items-center gap-2">
               <FaPhone className="text-sky" />
-              <span className="text-gray-300">{CONTACT_INFO.phone}</span>
+              <span className="text-gray-300">{contact.phone}</span>
             </span>
           </div>
           <span className="flex items-center gap-2">
@@ -103,20 +111,35 @@ export default function Navbar() {
 
             {/* Auth Button */}
             {user ? (
-              <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-200">
+              <div className="flex items-center gap-2 ml-4 pl-4 border-l border-gray-200">
                 <Link
                   to="/panel"
-                  className="flex items-center gap-2 px-4 py-2 bg-navy text-white rounded-lg text-sm font-medium hover:bg-navy-light transition"
+                  className="relative flex items-center gap-1.5 px-2.5 py-1.5 bg-navy text-white rounded-md text-xs font-medium hover:bg-navy-light transition max-w-[140px]"
+                  title={
+                    unreadCount > 0
+                      ? `${displayName} · ${unreadCount} yeni bildirim`
+                      : displayName
+                  }
                 >
-                  <FaUser className="text-xs" />
-                  {user.name.split(" ")[0]}
+                  <FaUser className="text-[10px] flex-shrink-0" />
+                  <span className="truncate">{displayName.split(" ")[0]}</span>
+                  {isAdmin && (
+                    <span className="text-[9px] font-bold bg-gold text-navy-dark px-1 py-0.5 rounded flex-shrink-0">
+                      ADMIN
+                    </span>
+                  )}
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 bg-brand-red text-white text-[10px] rounded-full flex items-center justify-center font-bold border-2 border-white">
+                      {unreadCount}
+                    </span>
+                  )}
                 </Link>
                 <button
                   onClick={logout}
-                  className="p-2 text-gray-400 hover:text-brand-red transition cursor-pointer"
+                  className="p-1.5 text-gray-400 hover:text-brand-red transition cursor-pointer"
                   title="Çıkış Yap"
                 >
-                  <FaSignOutAlt />
+                  <FaSignOutAlt className="text-sm" />
                 </button>
               </div>
             ) : (

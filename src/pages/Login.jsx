@@ -12,21 +12,18 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    // Simulate network delay
-    setTimeout(() => {
-      const result = login(email, password);
-      if (result.success) {
-        navigate("/panel");
-      } else {
-        setError(result.error);
-      }
-      setLoading(false);
-    }, 800);
+    const result = await login(email, password);
+    if (result.success) {
+      navigate("/panel");
+    } else {
+      setError(result.error);
+    }
+    setLoading(false);
   };
 
   return (
@@ -147,7 +144,7 @@ export default function Login() {
           <div className="text-center text-sm text-gray-500">
             Henüz üye değil misiniz?{" "}
             <Link
-              to="/#iletisim"
+              to="/iletisim"
               className="text-navy font-semibold hover:text-brand-red transition"
             >
               Başvuru Yapın
@@ -155,15 +152,11 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Demo Info */}
+        {/* Bilgi notu */}
         <div className="mt-5 bg-white/10 backdrop-blur rounded-xl p-4 border border-white/10">
-          <p className="text-white/70 text-xs text-center mb-2 font-medium">
-            Demo Giriş Bilgileri
+          <p className="text-white/70 text-xs text-center">
+            Giriş bilgileriniz dernek yönetimi tarafından sağlanır.
           </p>
-          <div className="text-sky text-xs text-center space-y-0.5 font-mono">
-            <p>E-posta: uye@anaded.com</p>
-            <p>Şifre: anaded2021</p>
-          </div>
         </div>
       </div>
     </div>

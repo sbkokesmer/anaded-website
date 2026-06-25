@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Env (Supabase anahtarları)
+.env
+.env.*
+!.env.example
+
 # Local tooling
 .netlify
 .claude

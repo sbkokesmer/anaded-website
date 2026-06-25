@@ -1,7 +1,11 @@
+import { Link } from "react-router-dom";
 import { FaInstagram, FaFacebookF } from "react-icons/fa";
-import { NAV_LINKS, SERVICES, CONTACT_INFO } from "../../constants/data";
+import { NAV_LINKS, SERVICES } from "../../constants/data";
+import { useContact } from "../../context/ContactContext";
 
 export default function Footer() {
+  const { contact } = useContact();
+
   return (
     <footer className="bg-navy-dark text-white pt-16">
       <div className="max-w-7xl mx-auto px-5">
@@ -29,12 +33,21 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {NAV_LINKS.map((link) => (
                 <li key={link.to}>
-                  <a
-                    href={`#${link.to}`}
-                    className="text-white/60 text-sm hover:text-sky transition"
-                  >
-                    {link.label}
-                  </a>
+                  {link.isPage ? (
+                    <Link
+                      to={link.to}
+                      className="text-white/60 text-sm hover:text-sky transition"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <Link
+                      to={`/#${link.to}`}
+                      className="text-white/60 text-sm hover:text-sky transition"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -61,32 +74,38 @@ export default function Footer() {
           <div>
             <h4 className="text-gold font-semibold mb-5">İletişim</h4>
             <ul className="space-y-2.5 text-white/60 text-sm">
-              <li>
-                <a href={`mailto:${CONTACT_INFO.email}`} className="hover:text-sky transition">
-                  {CONTACT_INFO.email}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`tel:+90${CONTACT_INFO.phone.replace(/\D/g, "").slice(1)}`}
-                  className="hover:text-sky transition"
-                >
-                  {CONTACT_INFO.phone}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`tel:+90${CONTACT_INFO.phoneSecondary.replace(/\D/g, "").slice(1)}`}
-                  className="hover:text-sky transition"
-                >
-                  {CONTACT_INFO.phoneSecondary}
-                </a>
-              </li>
-              <li>{CONTACT_INFO.address}</li>
+              {contact.email && (
+                <li>
+                  <a href={`mailto:${contact.email}`} className="hover:text-sky transition">
+                    {contact.email}
+                  </a>
+                </li>
+              )}
+              {contact.phone && (
+                <li>
+                  <a
+                    href={`tel:${contact.phone.replace(/\s/g, "")}`}
+                    className="hover:text-sky transition"
+                  >
+                    {contact.phone}
+                  </a>
+                </li>
+              )}
+              {contact.phoneSecondary && (
+                <li>
+                  <a
+                    href={`tel:${contact.phoneSecondary.replace(/\s/g, "")}`}
+                    className="hover:text-sky transition"
+                  >
+                    {contact.phoneSecondary}
+                  </a>
+                </li>
+              )}
+              {contact.address && <li>{contact.address}</li>}
             </ul>
             <div className="flex items-center gap-3 mt-5">
               <a
-                href={CONTACT_INFO.instagram}
+                href={contact.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -95,7 +114,7 @@ export default function Footer() {
                 <FaInstagram />
               </a>
               <a
-                href={CONTACT_INFO.facebook}
+                href={contact.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
