@@ -99,7 +99,7 @@ export default function ActivityCard({
           </div>
         )}
 
-        <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/20 transition-colors flex items-end p-4 opacity-0 group-hover:opacity-100">
+        <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/20 transition-colors flex items-end p-4 opacity-0 group-hover:opacity-100 pointer-events-none">
           <span className="text-white text-sm font-medium flex items-center gap-2">
             <FaImages /> Fotoğrafları Gör
           </span>
