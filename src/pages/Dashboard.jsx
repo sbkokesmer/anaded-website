@@ -45,8 +45,9 @@ export default function Dashboard() {
   const loadAdminCounts = useCallback(async () => {
     try {
       const notifs = await getAdminNotifications();
-      setRegCount(notifs.filter((n) => n.type === "registration").length);
-      setPayCount(notifs.filter((n) => n.type === "payment").length);
+      // Sadece okunmamış (yeni) olanları say — görülünce rozet temizlenir
+      setRegCount(notifs.filter((n) => n.type === "registration" && !n.read).length);
+      setPayCount(notifs.filter((n) => n.type === "payment" && !n.read).length);
     } catch (err) {
       console.error(err);
     }
@@ -317,6 +318,10 @@ export default function Dashboard() {
           loadAdminCounts();
           refreshNotifBadge();
         }}
+        onSeen={() => {
+          loadAdminCounts();
+          refreshNotifBadge();
+        }}
       />
       <AdminPaymentsModal
         open={modal === "payments"}
@@ -326,6 +331,10 @@ export default function Dashboard() {
           refreshNotifBadge();
         }}
         onCleared={() => {
+          loadAdminCounts();
+          refreshNotifBadge();
+        }}
+        onSeen={() => {
           loadAdminCounts();
           refreshNotifBadge();
         }}

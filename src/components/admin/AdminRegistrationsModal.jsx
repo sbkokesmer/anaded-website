@@ -11,7 +11,7 @@ import {
 import Modal from "../ui/Modal";
 import { fetchAllActivityRegistrations, fetchNotificationStates, setNotificationState } from "../../lib/api";
 
-export default function AdminRegistrationsModal({ open, onClose, onCleared }) {
+export default function AdminRegistrationsModal({ open, onClose, onCleared, onSeen }) {
   const [regs, setRegs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
@@ -24,13 +24,24 @@ export default function AdminRegistrationsModal({ open, onClose, onCleared }) {
         fetchNotificationStates(),
       ]);
       // Temizlenmiş (deleted) kayıtları çıkar
-      setRegs(all.filter((r) => !states[`areg:${r.id}`]?.deleted));
+      const shown = all.filter((r) => !states[`areg:${r.id}`]?.deleted);
+      setRegs(shown);
+      // Panel açıldı → görülmemiş olanları okundu işaretle (rozet temizlensin)
+      const unseen = shown.filter((r) => !states[`areg:${r.id}`]?.read);
+      if (unseen.length) {
+        await Promise.all(
+          unseen.map((r) =>
+            setNotificationState(`areg:${r.id}`, { read: true }).catch(() => {})
+          )
+        );
+        onSeen?.();
+      }
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onSeen]);
 
   useEffect(() => {
     if (open) load();

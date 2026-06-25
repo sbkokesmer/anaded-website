@@ -3,7 +3,7 @@ import { FaCreditCard, FaSpinner, FaUser, FaTrash, FaBroom } from "react-icons/f
 import Modal from "../ui/Modal";
 import { fetchPayments, fetchNotificationStates, setNotificationState } from "../../lib/api";
 
-export default function AdminPaymentsModal({ open, onClose, onCleared }) {
+export default function AdminPaymentsModal({ open, onClose, onCleared, onSeen }) {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,13 +14,24 @@ export default function AdminPaymentsModal({ open, onClose, onCleared }) {
         fetchPayments(),
         fetchNotificationStates(),
       ]);
-      setPayments(all.filter((p) => !states[`payment:${p.id}`]?.deleted));
+      const shown = all.filter((p) => !states[`payment:${p.id}`]?.deleted);
+      setPayments(shown);
+      // Panel açıldı → görülmemişleri okundu işaretle (rozet temizlensin)
+      const unseen = shown.filter((p) => !states[`payment:${p.id}`]?.read);
+      if (unseen.length) {
+        await Promise.all(
+          unseen.map((p) =>
+            setNotificationState(`payment:${p.id}`, { read: true }).catch(() => {})
+          )
+        );
+        onSeen?.();
+      }
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onSeen]);
 
   useEffect(() => {
     if (open) load();
